@@ -1,0 +1,460 @@
+/*
+  Mayan School — Theme layer
+  ---------------------------------------------------------------
+  Adds four persistent themes on top of the existing design system:
+    light (default) · dark · kids · contrast (high-contrast / accessibility)
+  The base palette in globals.css stays authoritative for light mode.
+  This file remaps the semantic tokens and the most common hardcoded
+  surfaces/pages so every component stays readable in every theme.
+
+  Themes are switched by setting data-theme on <html>. The switcher
+  lives in src/components/preferences.tsx and persists the choice.
+*/
+
+html { color-scheme: light; }
+
+/* ---------------------------------------------------------------- */
+/* Shared semantic tokens (light defaults, mirrors globals.css)      */
+/* ---------------------------------------------------------------- */
+:root {
+  --surface: #ffffff;
+  --surface-2: #fafbf8;
+  --surface-3: #f7f6f8;
+  --surface-raised: #ffffff;
+  --surface-tint: #fdfcff;
+  --on-surface: var(--text);
+  --on-surface-muted: var(--muted);
+  --line: var(--border);
+  --line-strong: #ded9e6;
+  --accent-soft: #f0eaf8;
+  --shadow-color: #32234614;
+  --topbar-bg: #fffffff2;
+  --scrollbar: #dcd9e0;
+}
+
+/* ---------------------------------------------------------------- */
+/* DARK                                                              */
+/* ---------------------------------------------------------------- */
+[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #171a1f;
+  --text: #eef0f2;
+  --muted: #a2a9b2;
+  --border: #2c313a;
+  --purple: #a98ad6;
+  --purple-dark: #8f6cc4;
+  --purple-light: #2a2437;
+  --green: #8fb47c;
+  --orange: #e0a96b;
+  --blue: #7fb0cc;
+
+  --surface: #1e222a;
+  --surface-2: #1a1e24;
+  --surface-3: #252a33;
+  --surface-raised: #232830;
+  --surface-tint: #20242c;
+  --on-surface: #eef0f2;
+  --on-surface-muted: #a2a9b2;
+  --line: #2c313a;
+  --line-strong: #3a414c;
+  --accent-soft: #2a2437;
+  --shadow-color: #00000055;
+  --topbar-bg: #1e222acc;
+  --scrollbar: #3a414c;
+}
+
+[data-theme="dark"] body { background: var(--page); color: var(--text); }
+
+/* Core chrome */
+[data-theme="dark"] .sidebar,
+[data-theme="dark"] .school-sidebar { background: #1b1f26; border-color: var(--border); }
+[data-theme="dark"] .topbar { background: var(--topbar-bg); border-color: var(--border); }
+[data-theme="dark"] .breadcrumb,
+[data-theme="dark"] .breadcrumb > strong { color: var(--muted); }
+[data-theme="dark"] .header-search { background: #232830; border-color: var(--border); color: var(--muted); }
+[data-theme="dark"] .header-search input { color: var(--text); }
+[data-theme="dark"] .header-search kbd { background: #2c313a; color: var(--muted); }
+[data-theme="dark"] .notification-button:hover,
+[data-theme="dark"] .icon-button:hover { background: #2a2f38; }
+
+/* Navigation */
+[data-theme="dark"] .nav-item { color: #c3c9d1; }
+[data-theme="dark"] .nav-item:hover { background: #262b34; color: #d9c9f0; }
+[data-theme="dark"] .nav-item.active { background: #2d2740; color: #bda1e6; }
+[data-theme="dark"] .sidebar-section-label,
+[data-theme="dark"] .sidebar-nav-label { color: #7f8691; }
+[data-theme="dark"] .sidebar-cozy-note { background: #232830; border-color: #2f353f; }
+[data-theme="dark"] .sidebar-cozy-note p { color: #c3c9d1; }
+
+/* Panels, cards, tables */
+[data-theme="dark"] .white-panel,
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .game-card,
+[data-theme="dark"] .badge-card,
+[data-theme="dark"] .chapter-card,
+[data-theme="dark"] .library-filters,
+[data-theme="dark"] .trust-strip,
+[data-theme="dark"] .admin-help-card,
+[data-theme="dark"] .empty-state,
+[data-theme="dark"] .lesson-side,
+[data-theme="dark"] .admin-library {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
+[data-theme="dark"] .game-card:hover { border-color: var(--line-strong); }
+[data-theme="dark"] .game-info > p,
+[data-theme="dark"] .game-meta,
+[data-theme="dark"] .age-label { color: var(--muted); }
+[data-theme="dark"] .game-title { color: var(--text); }
+
+[data-theme="dark"] .games-table th { background: #20242c; color: #9aa3ad; border-color: var(--border); }
+[data-theme="dark"] .games-table td { border-color: var(--border); color: var(--text); }
+[data-theme="dark"] .games-table tbody tr:hover { background: #232830; }
+
+/* Modals */
+[data-theme="dark"] .modal { background: var(--surface-raised); border-color: var(--border); }
+[data-theme="dark"] .modal-header { background: #232830e6; border-color: var(--border); }
+
+/* Inputs */
+[data-theme="dark"] input,
+[data-theme="dark"] select,
+[data-theme="dark"] textarea {
+  background: #20242c;
+  color: var(--text);
+  border-color: var(--border);
+}
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder { color: #78808b; }
+
+/* Buttons */
+[data-theme="dark"] .secondary-button { background: #262b34; border-color: var(--border); color: #d3d8de; }
+[data-theme="dark"] .secondary-button:hover { background: #2d333d; }
+[data-theme="dark"] .text-button,
+[data-theme="dark"] .text-link { color: var(--purple); }
+
+/* Hero + spotlight */
+[data-theme="dark"] .hero-banner { background: #2a2618; border-color: #3a341f; }
+[data-theme="dark"] .hero-copy p { color: #d6cfae; }
+[data-theme="dark"] .streak-pill { background: #232015; border-color: #3a341f; }
+[data-theme="dark"] .bangla-spotlight { background: #241f2e; border-color: #352d44; }
+
+/* Subject cards keep their accent tint but darken the surface */
+[data-theme="dark"] .subject-card { background: var(--surface); border-color: var(--border); }
+[data-theme="dark"] .subject-card.bangla { background: #2a2419; }
+[data-theme="dark"] .subject-card.math { background: #1f2a20; }
+[data-theme="dark"] .subject-card.english { background: #2a2419; }
+[data-theme="dark"] .subject-card.science { background: #202834; }
+[data-theme="dark"] .subject-card.creativity { background: #2a2030; }
+[data-theme="dark"] .subject-card-name h3 { color: var(--text); }
+[data-theme="dark"] .subject-card-name > span,
+[data-theme="dark"] .subject-card-bottom { color: var(--muted); }
+
+/* Headings / library banners */
+[data-theme="dark"] .library-heading { background: #232830; border-color: var(--border); }
+[data-theme="dark"] .library-heading-icon { background: #ffffff14; }
+[data-theme="dark"] .page-heading h1,
+[data-theme="dark"] .page-heading > p,
+[data-theme="dark"] .page-heading > div > p { color: inherit; }
+
+/* Progress + lesson UI */
+[data-theme="dark"] .progress-track { background: #2c313a; }
+[data-theme="dark"] .lesson-row { border-color: var(--border); }
+[data-theme="dark"] .lesson-row:hover { background: #232830; }
+[data-theme="dark"] .study-card { background: #232830; border-color: var(--border); }
+
+/* Game player surfaces */
+[data-theme="dark"] .question-content,
+[data-theme="dark"] .answer-option { background: var(--surface); border-color: var(--border); color: var(--text); }
+[data-theme="dark"] .answer-option:hover { background: #2a303a; }
+[data-theme="dark"] .memory-card { background: #262b34; border-color: var(--border); }
+[data-theme="dark"] .result-screen { background: transparent; }
+
+/* Feedback / alerts keep semantic tints but readable text */
+[data-theme="dark"] .answer-feedback.try-again { background: #33291a; border-color: #4a3b22; color: #e6c98e; }
+[data-theme="dark"] .answer-option.incorrect { background: #33241d; border-color: #4a3529; color: #e6b79c; }
+[data-theme="dark"] .form-error { background: #33211d; border-color: #4a3129; color: #e8a995; }
+[data-theme="dark"] .toast { background: var(--surface-raised); border-color: var(--border); color: #d9c9f0; }
+
+/* Footer + misc */
+[data-theme="dark"] .page-footer { border-color: var(--border); color: var(--muted); }
+[data-theme="dark"] .search-empty,
+[data-theme="dark"] .count-badge { background: #262b34; color: var(--muted); }
+
+/* ---------------------------------------------------------------- */
+/* KIDS — joyful, higher saturation, soft rounded surfaces           */
+/* ---------------------------------------------------------------- */
+[data-theme="kids"] {
+  color-scheme: light;
+  --page: #fff7ec;
+  --text: #3b2f4a;
+  --muted: #8b7d99;
+  --border: #f4e3d0;
+  --purple: #8a4fd1;
+  --purple-dark: #7038bd;
+  --purple-light: #f6ebff;
+  --green: #2fa06a;
+  --orange: #f08b3a;
+  --blue: #3d94d6;
+
+  --surface: #ffffff;
+  --surface-2: #fff8f0;
+  --surface-3: #fdf1e6;
+  --surface-raised: #ffffff;
+  --surface-tint: #fffbff;
+  --line: #f4e3d0;
+  --line-strong: #eccfb4;
+  --accent-soft: #f6ebff;
+  --topbar-bg: #fff8f0f2;
+}
+
+[data-theme="kids"] body { background: var(--page); }
+[data-theme="kids"] .sidebar,
+[data-theme="kids"] .school-sidebar { background: #fffaef; border-color: var(--border); }
+[data-theme="kids"] .topbar { background: var(--topbar-bg); border-color: var(--border); }
+[data-theme="kids"] .hero-banner { background: #ffe9a8; border-color: #f7d982; }
+[data-theme="kids"] .nav-item.active { background: #f6ebff; color: var(--purple); }
+[data-theme="kids"] .primary-button { box-shadow: 0 3px 0 #7038bd33; }
+[data-theme="kids"] .subject-card,
+[data-theme="kids"] .game-card { border-radius: 18px; }
+[data-theme="kids"] .white-panel,
+[data-theme="kids"] .stat-card,
+[data-theme="kids"] .badge-card { border-radius: 18px; }
+
+/* ---------------------------------------------------------------- */
+/* CONTRAST — high-contrast accessibility theme                      */
+/* ---------------------------------------------------------------- */
+[data-theme="contrast"] {
+  color-scheme: light;
+  --page: #ffffff;
+  --text: #0b0b0b;
+  --muted: #3a3a3a;
+  --border: #000000;
+  --purple: #5a2ea6;
+  --purple-dark: #431f80;
+  --purple-light: #eee4ff;
+  --green: #0a6b2e;
+  --orange: #9a4a00;
+  --blue: #0a4d8f;
+
+  --surface: #ffffff;
+  --surface-2: #ffffff;
+  --surface-3: #f2f2f2;
+  --surface-raised: #ffffff;
+  --surface-tint: #ffffff;
+  --line: #000000;
+  --line-strong: #000000;
+  --accent-soft: #eee4ff;
+  --topbar-bg: #ffffff;
+  --scrollbar: #000000;
+}
+
+[data-theme="contrast"] body { background: #ffffff; color: #0b0b0b; }
+[data-theme="contrast"] .sidebar,
+[data-theme="contrast"] .school-sidebar,
+[data-theme="contrast"] .topbar { background: #ffffff; border-color: #000; }
+[data-theme="contrast"] .white-panel,
+[data-theme="contrast"] .stat-card,
+[data-theme="contrast"] .game-card,
+[data-theme="contrast"] .badge-card,
+[data-theme="contrast"] .library-filters,
+[data-theme="contrast"] .trust-strip,
+[data-theme="contrast"] .modal,
+[data-theme="contrast"] .chapter-card {
+  background: #ffffff;
+  border-width: 2px;
+  border-color: #000;
+}
+[data-theme="contrast"] .nav-item { color: #1a1a1a; }
+[data-theme="contrast"] .nav-item:hover { background: #eee4ff; }
+[data-theme="contrast"] .nav-item.active { background: #5a2ea6; color: #ffffff; }
+[data-theme="contrast"] .nav-item.active .nav-label small { color: #f0e9ff; }
+[data-theme="contrast"] .primary-button { background: #5a2ea6; border: 2px solid #000; }
+[data-theme="contrast"] .secondary-button { background: #fff; border: 2px solid #000; color: #0b0b0b; }
+[data-theme="contrast"] .subject-card,
+[data-theme="contrast"] .answer-option,
+[data-theme="contrast"] input,
+[data-theme="contrast"] select,
+[data-theme="contrast"] textarea { border-width: 2px; border-color: #000; }
+[data-theme="contrast"] .game-meta,
+[data-theme="contrast"] .game-info > p { color: #2a2a2a; }
+[data-theme="contrast"] .toast { border: 2px solid #000; color: #0b0b0b; }
+[data-theme="contrast"] :focus-visible { outline: 4px solid #000 !important; outline-offset: 3px; }
+
+/* ---------------------------------------------------------------- */
+/* Theme switcher UI                                                 */
+/* ---------------------------------------------------------------- */
+.theme-switcher { display: inline-flex; align-items: center; gap: 4px; padding: 3px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface-3); }
+.theme-switcher button { display: inline-flex; align-items: center; justify-content: center; gap: 5px; min-height: 30px; padding: 4px 9px; border-radius: 6px; font-size: 11.5px; font-weight: 500; color: var(--muted); transition: background .18s, color .18s; }
+.theme-switcher button:hover { background: var(--surface); color: var(--text); }
+.theme-switcher button.active { background: var(--surface); color: var(--purple); box-shadow: 0 1px 4px var(--shadow-color); }
+.theme-switcher button .theme-label { display: none; }
+@media (min-width: 1080px) { .theme-switcher button .theme-label { display: inline; } }
+
+.theme-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 8px; }
+.theme-option { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; padding: 13px 14px; border: 2px solid var(--border); border-radius: 12px; background: var(--surface); color: var(--text); text-align: left; min-height: 92px; }
+.theme-option:hover { border-color: var(--line-strong); }
+.theme-option.active { border-color: var(--purple); background: var(--accent-soft); }
+.theme-option b { font-size: 13.5px; }
+.theme-option small { color: var(--muted); font-size: 11px; line-height: 1.5; }
+.theme-swatches { display: flex; gap: 4px; }
+.theme-swatches i { width: 16px; height: 16px; border-radius: 5px; border: 1px solid var(--shadow-color); }
+
+/* ---------------------------------------------------------------- */
+/* Voice / audio toggle                                              */
+/* ---------------------------------------------------------------- */
+.voice-toggle { display: inline-flex; align-items: center; gap: 7px; min-height: 34px; padding: 5px 11px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface); color: var(--muted); font-size: 11.5px; font-weight: 500; transition: background .18s, color .18s, border-color .18s; }
+.voice-toggle:hover { background: var(--surface-3); color: var(--text); }
+.voice-toggle.on { color: var(--purple); border-color: var(--line-strong); }
+.voice-toggle.off { color: var(--muted); }
+.voice-toggle .mini-toggle { display: none; }
+html[data-voice="off"] .voice-toggle { opacity: .8; }
+
+/* Settings page */
+.settings-layout { display: grid; gap: 18px; }
+.settings-section { display: grid; gap: 12px; }
+.settings-section > header { display: flex; align-items: center; gap: 10px; }
+.settings-section > header h2 { font-size: 17px; font-weight: 700; }
+.settings-section > header p { color: var(--muted); font-size: 12px; }
+.settings-row { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding: 12px 0; border-bottom: 1px solid var(--border); }
+.settings-row:last-child { border-bottom: 0; }
+.settings-row .settings-label b { display: block; font-size: 13.5px; }
+.settings-row .settings-label small { color: var(--muted); font-size: 11.5px; }
+.switch-button { position: relative; display: inline-flex; align-items: center; width: 46px; height: 26px; border-radius: 999px; background: var(--line-strong); transition: background .2s; flex-shrink: 0; }
+.switch-button i { position: absolute; left: 3px; top: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px #0003; transition: transform .2s; }
+.switch-button.on { background: var(--purple); }
+.switch-button.on i { transform: translateX(20px); }
+.voice-sample-grid { display: flex; gap: 8px; flex-wrap: wrap; }
+.sidebar-theme-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 2px 0; }
+html[data-sidebar="collapsed"] .sidebar-theme-row { flex-direction: column; align-items: center; }
+html[data-sidebar="collapsed"] .sidebar-theme-row .nav-label { display: none; }
+
+/* ---------------------------------------------------------------- */
+/* General Knowledge subject accent (teal)                           */
+/* ---------------------------------------------------------------- */
+:root { --teal: #2f9a8f; --teal-soft: #e3f3f1; }
+.mini-subject-icon.general, .stat-icon.teal { background: var(--teal-soft); color: var(--teal); }
+.subject-card.general { background: #e6f5f3; color: var(--teal); border-color: #d3ebe8; }
+.subject-card.general .subject-card-icon { background: #ffffffb3; color: var(--teal); }
+.subject-card.general .subject-card-name h3 { color: #23857b; }
+.subject-badge.general { color: #23857b; background: var(--teal-soft); }
+.game-card.general .game-title { color: #23857b; }
+.library-heading.general { background: #e6f5f3; border-color: #d0e9e5; }
+.curriculum-tabs > button.general.active { background: var(--teal-soft); border-color: #9fcfc8; color: #1f7a71; }
+.curriculum-summary.general { background: #e6f5f3; border-color: #cde7e3; }
+.curriculum-summary.general .curriculum-summary-icon { color: var(--teal); }
+[data-theme="dark"] .subject-card.general { background: #172a29; }
+[data-theme="dark"] .library-heading.general { background: #1c2f2d; border-color: var(--border); }
+[data-theme="dark"] .curriculum-summary.general { background: #1c2f2d; }
+.voice-toggle { display: inline-flex; align-items: center; gap: 7px; min-height: 34px; padding: 5px 11px; border: 1px solid var(--border); border-radius: 9px; background: var(--surface); color: var(--muted); font-size: 11.5px; font-weight: 500; }
+.voice-toggle:hover { background: var(--surface-3); color: var(--text); }
+.voice-toggle.on { color: var(--teal); border-color: var(--line-strong); }
+.voice-toggle.off { color: var(--muted); }
+
+/* Poem / story library */
+.story-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+.story-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+.story-card .story-tag { align-self: flex-start; font-size: 10.5px; padding: 3px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--purple); }
+.story-card h3 { font-size: 16px; font-weight: 700; }
+.story-card p { color: var(--muted); font-size: 12.5px; line-height: 1.7; }
+.poem-lines { display: grid; gap: 6px; margin: 6px 0; }
+.poem-lines p { font-size: 14px; color: var(--text); line-height: 1.9; }
+.poem-lines p.active { color: var(--purple); font-weight: 600; }
+.story-body { display: grid; gap: 12px; }
+.story-body p { line-height: 1.9; }
+.reader-toolbar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.reader-toolbar .voice-toggle { min-height: 34px; }
+.lesson-reader-body { display: grid; gap: 14px; padding: 22px 24px 26px; }
+.lesson-reader-meta { display: flex; align-items: center; justify-content: space-between; gap: 10px; color: var(--muted); font-size: 12px; }
+.lesson-reader-meta span:last-child { color: var(--muted); }
+.reader-note, .voice-note { display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--muted); line-height: 1.6; }
+.voice-note { padding: 9px 12px; background: var(--surface-3); border: 1px solid var(--border); border-radius: 10px; }
+.reader-actions { display: flex; justify-content: flex-end; gap: 10px; }
+
+/* ---------------------------------------------------------------- */
+/* Compact, non-scrolling sidebar for the expanded navigation set    */
+/* ---------------------------------------------------------------- */
+.school-sidebar .sidebar-cozy-note { display: none; }
+.school-sidebar .primary-nav .nav-item { min-height: 40px; padding: 8px 12px; }
+.school-sidebar .primary-nav .nav-label small { font-size: 9.5px; }
+.school-sidebar .primary-nav { gap: 3px; }
+.school-sidebar .sidebar-nav-label { margin: 16px 0 10px; }
+
+/* Short viewports (e.g. 540–700px tall): keep the expanded sidebar
+   non-scrolling now that it carries eight primary destinations. */
+@media (max-height: 720px) and (min-width: 761px) {
+  .school-sidebar { padding-top: 14px; padding-bottom: 8px; }
+  .school-sidebar .school-brand-row { padding-bottom: 6px; }
+  .school-sidebar .sidebar-intro { display: none; margin: 0; }
+  .school-sidebar .sidebar-cozy-note { display: none; margin: 0; }
+  .school-sidebar .sidebar-nav-label { margin: 6px 0 5px; }
+  .school-sidebar .primary-nav { gap: 1px; }
+  .school-sidebar .primary-nav .nav-item { min-height: 30px; padding-top: 3px; padding-bottom: 3px; }
+  .school-sidebar .primary-nav .nav-item .nav-icon svg { width: 18px; height: 18px; }
+  .school-sidebar .primary-nav .nav-label small { display: none; }
+  .school-sidebar .primary-nav .nav-label { gap: 0; }
+  .school-sidebar .school-sidebar-bottom { gap: 4px; }
+  .school-sidebar .sidebar-tools { gap: 3px; }
+  .school-sidebar .motion-toggle,
+  .school-sidebar .utility-nav,
+  .school-sidebar .studio-shortcut { min-height: 28px; }
+  .school-sidebar .studio-credit { margin-top: 2px; }
+}
+@media (max-width: 760px) {
+  .school-sidebar .primary-nav .nav-item { min-height: 40px; padding-top: 6px; padding-bottom: 6px; }
+  .school-sidebar .primary-nav { gap: 2px; }
+  .school-sidebar .sidebar-cozy-note { display: none; }
+  .school-sidebar .sidebar-intro { margin-bottom: 4px; }
+  .school-sidebar .sidebar-nav-label { margin: 10px 0 6px; }
+}
+
+/* ---------------------------------------------------------------- */
+/* Home explore strip                                                */
+/* ---------------------------------------------------------------- */
+.explore-strip { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 22px 0; }
+.explore-tile { display: flex; align-items: center; gap: 12px; padding: 15px 16px; border: 1px solid var(--border); border-radius: 13px; background: var(--surface); color: var(--text); transition: transform .16s ease, border-color .16s ease; }
+.explore-tile:hover { transform: translateY(-2px); }
+.explore-tile b { display: block; font-size: 13.5px; }
+.explore-tile small { color: var(--muted); font-size: 11px; }
+.explore-tile > div { flex: 1; }
+.explore-tile .explore-icon { display: grid; place-items: center; width: 40px; height: 40px; border-radius: 11px; background: var(--accent-soft); color: var(--purple); }
+.explore-tile.poems .explore-icon { background: #f6e9f3; color: #b2589b; }
+.explore-tile.stories .explore-icon { background: #fbecdd; color: var(--orange); }
+.explore-tile.progress .explore-icon { background: #e5efe2; color: var(--green); }
+.explore-tile.rewards .explore-icon { background: #fbf1d6; color: #c1913a; }
+.explore-tile.settings .explore-icon { background: #e6eff4; color: var(--blue); }
+[data-theme="dark"] .explore-tile .explore-icon { background: var(--surface-3); }
+
+/* ---------------------------------------------------------------- */
+/* Very narrow viewports (≤380px): prevent horizontal overflow       */
+/* ---------------------------------------------------------------- */
+@media (max-width: 640px) {
+  .topbar-prefs { display: none; }
+  .discovery-layout > *, .recommended-section { min-width: 0; }
+  .recommendation-grid { max-width: 100%; }
+  .game-grid, .library-grid, .story-grid, .explore-strip, .subject-grid { min-width: 0; }
+}
+@media (max-width: 900px) {
+  .topbar-prefs .theme-switcher .theme-label, .topbar-prefs .voice-toggle .nav-label { display: none; }
+}
+@media (max-width: 380px) {
+  .explore-strip { grid-template-columns: minmax(0, 1fr); }
+  .story-grid { grid-template-columns: minmax(0, 1fr); }
+  .recommendation-grid { grid-template-columns: repeat(3, minmax(150px, 1fr)) !important; }
+  .settings-layout, .theme-grid { grid-template-columns: minmax(0, 1fr); }
+  .lesson-reader-body { padding: 18px 16px 22px; }
+}
+html[data-theme] body,
+html[data-theme] .sidebar,
+html[data-theme] .topbar,
+html[data-theme] .white-panel,
+html[data-theme] .game-card,
+html[data-theme] .modal { transition: background-color .25s ease, color .25s ease, border-color .25s ease; }
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme] body,
+  html[data-theme] .sidebar,
+  html[data-theme] .topbar,
+  html[data-theme] .white-panel,
+  html[data-theme] .game-card,
+  html[data-theme] .modal { transition: none; }
+}

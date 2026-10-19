@@ -18,8 +18,8 @@ try {
   await page.evaluate(() => document.fonts.ready);
   await page.waitForTimeout(900);
   await expect(page).toHaveTitle(/Mayan School/);
-  await expect(page.locator('.subject-card')).toHaveCount(5);
-  await expect(page.locator('.school-sidebar .primary-nav .nav-item')).toHaveCount(4);
+  await expect(page.locator('.subject-card')).toHaveCount(6);
+  await expect(page.locator('.school-sidebar .primary-nav .nav-item')).toHaveCount(8);
   const catalog = (await (await page.request.get(`${base}/api/games`)).json()).games;
   expect(catalog.filter(g => g.subject === 'bangla')).toHaveLength(8);
   await page.screenshot({ path: 'test-artifacts/mayan-home.png', fullPage: true });
@@ -72,7 +72,7 @@ try {
   expect((await profile()).favorites).toContain('bangla-vowels');
   console.log('PASS Bangla quiz, gentle retry, review, pass state, server grading, mastery and bookmarks');
 
-  await page.getByRole('link', { name: 'শেখার পথ', exact: true }).click();
+  await page.getByRole('link', { name: 'শেখা', exact: true }).click();
   await expect(page.locator('.lesson-row.complete')).toHaveCount(1);
   await page.screenshot({ path: 'test-artifacts/mayan-lessons.png', fullPage: true });
   await page.locator('.chapter-card').first().locator('.lesson-row').nth(1).getByRole('button').click();
@@ -160,7 +160,7 @@ try {
   await expect(page.locator('.school-sidebar.is-open')).toBeVisible();
   expect(await page.locator('.school-sidebar').evaluate(el => el.scrollHeight <= el.clientHeight + 1)).toBe(true);
   await page.screenshot({ path: 'test-artifacts/mayan-mobile-menu.png' });
-  await page.locator('.primary-nav').getByRole('link', { name: 'শেখার পথ', exact: true }).click();
+  await page.locator('.primary-nav').getByRole('link', { name: 'শেখা', exact: true }).click();
   await expect(page.locator('.lessons-heading')).toBeVisible();
   await expect(page.locator('.school-sidebar')).toHaveAttribute('inert', '');
   await page.emulateMedia({ reducedMotion: 'reduce' }); await page.reload({ waitUntil: 'networkidle' });

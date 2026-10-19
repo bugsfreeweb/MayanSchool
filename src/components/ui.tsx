@@ -2,8 +2,9 @@
 
 import { useEffect, useId, useRef, type ReactNode } from "react";
 import Link from "next/link";
-import { ArrowRight, Bookmark, Calculator, Check, Clock3, FlaskConical, Palette, Play, Search, X } from "lucide-react";
+import { ArrowRight, Bookmark, Calculator, Check, Clock3, FlaskConical, Moon, Palette, Play, Search, Sparkles, Sun, Volume2, VolumeX, X, Zap } from "lucide-react";
 import { bn, subjectName, type Game, type Subject } from "@/lib/content";
+import { useInterface, themes, type ThemeName } from "@/components/preferences";
 
 export function Logo() {
   return <Link href="/" className="brand mayan-brand" aria-label="Mayan School হোম" title="Mayan School"><svg className="brand-emblem" viewBox="0 0 52 54" width="43" height="45" aria-hidden="true"><g className="brand-sun"><circle cx="26" cy="12" r="7" fill="#eeb656"/><path d="M26 1v2M12 6l2 2M40 6l-2 2" stroke="#eeb656" strokeWidth="2" strokeLinecap="round"/></g><g className="brand-pages"><path d="M4 17c9-2 15 2 22 9v25C17 43 11 40 4 41Z" fill="#357d70"/><path d="M48 17c-9-2-15 2-22 9v25c9-8 15-11 22-10Z" fill="#66a791"/><path d="M10 11c8 1 12 5 16 13v21c-4-8-9-12-16-14Z" fill="#a3c6a3"/><path d="M42 11c-8 1-12 5-16 13v21c4-8 9-12 16-14Z" fill="#daead6"/><path d="M26 25v24" stroke="#fff9ee" strokeWidth="2" strokeLinecap="round"/></g></svg><span className="brand-wordmark">Mayan<span>SCHOOL</span></span></Link>;
@@ -12,7 +13,23 @@ export function Avatar({ large = false }: { large?: boolean }) {
   return <svg className={`avatar ${large ? "large" : ""}`} viewBox="0 0 64 64" role="img" aria-label="শিক্ষার্থীর অ্যাভাটার"><circle cx="32" cy="32" r="32" fill="#eee7f7"/><path d="M14 62c0-17 7-22 18-22s18 5 18 22" fill="#9176c1"/><ellipse cx="17" cy="30" rx="7" ry="12" fill="#3e3033"/><ellipse cx="47" cy="30" rx="7" ry="12" fill="#3e3033"/><circle cx="14" cy="26" r="4" fill="#eaa54e"/><circle cx="50" cy="26" r="4" fill="#eaa54e"/><path d="M18 25c0-20 29-23 29 0v11c0 9-8 15-15 15s-14-6-14-15z" fill="#c88c65"/><path d="M17 30c-4-25 29-28 32-6-6-1-13-5-16-10-2 9-9 12-16 16" fill="#3e3033"/><ellipse cx="26" cy="32" rx="2" ry="2.7" fill="#352a30"/><ellipse cx="39" cy="32" rx="2" ry="2.7" fill="#352a30"/><path d="M27 40q5 6 11-1" fill="none" stroke="#713e35" strokeWidth="2.2" strokeLinecap="round"/><circle cx="22" cy="38" r="3" fill="#d99378"/><circle cx="43" cy="38" r="3" fill="#d99378"/></svg>;
 }
 export function SubjectIcon({ subject, size = 23 }: { subject: Subject; size?: number }) {
-  return subject === "bangla" ? <span className="bangla-letter-icon" style={{ fontSize: size + 4 }}>অ</span> : subject === "math" ? <Calculator size={size}/> : subject === "english" ? <span className="letter-icon" style={{ fontSize: size + 2 }}>Aa</span> : subject === "science" ? <FlaskConical size={size}/> : <Palette size={size}/>;
+  return subject === "bangla" ? <span className="bangla-letter-icon" style={{ fontSize: size + 4 }}>অ</span> : subject === "math" ? <Calculator size={size}/> : subject === "english" ? <span className="letter-icon" style={{ fontSize: size + 2 }}>Aa</span> : subject === "science" ? <FlaskConical size={size}/> : subject === "general" ? <GlobeIcon size={size}/> : <Palette size={size}/>;
+}
+export function GlobeIcon({ size = 23 }: { size?: number }) {
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.6 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.6-3.8-9S9.5 5.6 12 3Z"/></svg>;
+}
+const themeIcons: Record<ThemeName, typeof Sun> = { light: Sun, dark: Moon, kids: Sparkles, contrast: Zap };
+export function ThemeSwitcher({ compact = false }: { compact?: boolean }) {
+  const { theme, setTheme } = useInterface();
+  return <div className={`theme-switcher ${compact ? "compact" : ""}`} role="group" aria-label="থিম নির্বাচন">{themes.map(({ id, name, english }) => { const Icon = themeIcons[id]; return <button key={id} type="button" className={theme === id ? "active" : ""} aria-pressed={theme === id} aria-label={`${name} থিম`} title={`${name} থিম`} onClick={() => setTheme(id)}><Icon size={15}/><span className="theme-label">{name}</span></button>; })}</div>;
+}
+export function ThemePicker() {
+  const { theme, setTheme } = useInterface();
+  return <div className="theme-grid" role="radiogroup" aria-label="থিম">{themes.map(({ id, name, english, description, swatches }) => { const Icon = themeIcons[id]; return <button key={id} type="button" role="radio" aria-checked={theme === id} className={`theme-option ${theme === id ? "active" : ""}`} onClick={() => setTheme(id)}><span className="theme-swatches" aria-hidden="true">{swatches.map((color) => <i key={color} style={{ background: color }}/>)}</span><b><Icon size={14} style={{ verticalAlign: "-2px", marginRight: 5 }}/>{name} · {english}</b><small>{description}</small></button>; })}</div>;
+}
+export function VoiceToggle({ showLabel = true }: { showLabel?: boolean }) {
+  const { voice, toggleVoice } = useInterface();
+  return <button type="button" className={`voice-toggle ${voice ? "on" : "off"}`} onClick={toggleVoice} aria-pressed={voice} aria-label={voice ? "কণ্ঠ ও শব্দ বন্ধ করো" : "কণ্ঠ ও শব্দ চালু করো"} title={voice ? "কণ্ঠ ও শব্দ চালু আছে" : "কণ্ঠ ও শব্দ বন্ধ আছে"}>{voice ? <Volume2 size={18}/> : <VolumeX size={18}/>}{showLabel && <span>{voice ? "কণ্ঠ চালু" : "কণ্ঠ বন্ধ"}</span>}</button>;
 }
 export function BanglaCover({ words = false }: { words?: boolean }) { return <div className={`bangla-cover-letters ${words ? "words" : ""}`} aria-hidden="true">{(words ? ["মা", "বই", "আম"] : ["অ", "আ", "ক"]).map((letter, index) => <span key={letter} style={{ "--letter-index": index } as React.CSSProperties}>{letter}</span>)}</div>; }
 export function GameCard({ game, saved, completed, onPlay, onSave }: { game: Game; saved: boolean; completed?: boolean; onPlay: (game: Game) => void; onSave: (id: string) => void }) {
@@ -33,7 +50,7 @@ export function Modal({ title, children, onClose, wide = false, className = "" }
   const ref = useRef<HTMLDivElement>(null);
   const titleId = useId();
   const closeRef = useRef(onClose);
-  closeRef.current = onClose;
+  useEffect(() => { closeRef.current = onClose; }, [onClose]);
   useEffect(() => {
     const previous = document.activeElement as HTMLElement | null;
     const overflow = document.body.style.overflow;

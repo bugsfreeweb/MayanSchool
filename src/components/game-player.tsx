@@ -2,10 +2,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, BookOpen, ChevronDown, Check, CheckCircle2, Clock3, Flower2, Heart, Leaf, Lightbulb, LoaderCircle, Play, RotateCcw, ShieldCheck, Sparkles, Star, Sun, Target, Trophy, Users, Sprout, Volume2, VolumeX, Droplets } from "lucide-react";
 import { Modal, api, SubjectIcon, BanglaCover } from "@/components/ui";
+import { useInterface } from "@/components/preferences";
 import { bn, getQuestions, subjectName, type Game } from "@/lib/content";
+import { playTone, closeToneContext } from "@/lib/voice";
 
 type Result = { correct: number; total: number; stars: number; passed: boolean };
 export function GamePlayer({ game, onClose, onSaved }: { game: Game; onClose: () => void; onSaved: () => void }) {
+  const { voice } = useInterface();
   const [phase, setPhase] = useState<"intro" | "playing" | "done">("intro");
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
@@ -16,9 +19,8 @@ export function GamePlayer({ game, onClose, onSaved }: { game: Game; onClose: ()
   const [result, setResult] = useState<Result | null>(null);
   const [elapsed, setElapsed] = useState(0);
   const [run, setRun] = useState(0);
-  const startTime = useRef(Date.now());
+  const startTime = useRef(0);
   const inFlight = useRef(false);
-  const audioRef = useRef<AudioContext | null>(null);
   const questions = getQuestions(game.id);
   const question = questions[index];
   const passed = result ? result.passed ?? result.correct / result.total >= .6 : false;
@@ -29,20 +31,11 @@ export function GamePlayer({ game, onClose, onSaved }: { game: Game; onClose: ()
     const timer = setInterval(() => setElapsed(Math.floor((Date.now() - startTime.current) / 1000)), 1000);
     return () => clearInterval(timer);
   }, [phase, game.kind]);
-  useEffect(() => () => { void audioRef.current?.close(); }, []);
+  useEffect(() => () => { closeToneContext(); }, []);
   const start = () => { setIndex(0); setAnswers([]); setSelected(null); setResult(null); setError(""); setElapsed(0); setRun((n) => n + 1); startTime.current = Date.now(); setPhase("playing"); };
   const tone = (correct: boolean) => {
-    if (!sound) return;
-    try {
-      const context = audioRef.current ?? new AudioContext(); audioRef.current = context;
-      void context.resume();
-      const oscillator = context.createOscillator(), gain = context.createGain();
-      oscillator.connect(gain); gain.connect(context.destination);
-      oscillator.type = "sine"; oscillator.frequency.setValueAtTime(correct ? 660 : 280, context.currentTime);
-      if (correct) oscillator.frequency.setValueAtTime(880, context.currentTime + .13);
-      gain.gain.setValueAtTime(.07, context.currentTime); gain.gain.exponentialRampToValueAtTime(.001, context.currentTime + .3);
-      oscillator.start(); oscillator.stop(context.currentTime + .3);
-    } catch { /* Sound is optional when the browser does not allow audio. */ }
+    if (!sound || !voice) return;
+    playTone(correct);
   };
   const finish = useCallback(async (moves?: number, finalAnswers?: number[]) => {
     if (inFlight.current) return;
@@ -55,7 +48,7 @@ export function GamePlayer({ game, onClose, onSaved }: { game: Game; onClose: ()
   }, [game.id, onSaved]);
   const choose = (choice: number) => { if (selected !== null) return; setSelected(choice); setAnswers((previous) => [...previous, choice]); tone(choice === question.answer); };
   const next = () => { if (index + 1 === questions.length) void finish(undefined, answers); else { setIndex(index + 1); setSelected(null); } };
-  const goals = game.subject === "bangla" ? ["বাংলা বর্ণ, শব্দ ও বাক্য চিনতে শেখা", "নিজের ভাষায় পড়ার আত্মবিশ্বাস বাড়ানো"] : game.subject === "math" ? ["সংখ্যা ও গাণিতিক ধারণা বুঝতে শেখা", "মনোযোগ দিয়ে সমস্যা সমাধান করা"] : game.subject === "english" ? ["নতুন অক্ষর ও শব্দ চিনতে শেখা", "ইংরেজি শেখার আত্মবিশ্বাস বাড়ানো"] : game.subject === "science" ? ["চারপাশের পৃথিবীকে নতুনভাবে চেনা", "পর্যবেক্ষণ ও কৌতূহল তৈরি করা"] : ["মনোযোগ ও স্মৃতিশক্তি বাড়ানো", "রং ও আকৃতির সাথে বন্ধুত্ব করা"];
+  const goals = game.subject === "bangla" ? ["বাংলা বর্ণ, শব্দ ও বাক্য চিনতে শেখা", "নিজের ভাষায় পড়ার আত্মবিশ্বাস বাড়ানো"] : game.subject === "math" ? ["সংখ্যা ও গাণিতিক ধারণা বুঝতে শেখা", "মনোযোগ দিয়ে সমস্যা সমাধান করা"] : game.subject === "english" ? ["নতুন অক্ষর ও শব্দ চিনতে শেখা", "ইংরেজি শেখার আত্মবিশ্বাস বাড়ানো"] : game.subject === "science" ? ["চারপাশের পৃথিবীকে নতুনভাবে চেনা", "পর্যবেক্ষণ ও কৌতূহল তৈরি করা"] : game.subject === "general" ? ["নিজের দেশ, সংস্কৃতি ও জীবনদক্ষতা জানা", "ভালো মানুষ হওয়ার ছোট্ট পাঠ শেখা"] : ["মনোযোগ ও স্মৃতিশক্তি বাড়ানো", "রং ও আকৃতির সাথে বন্ধুত্ব করা"];
   return <Modal title={game.title} onClose={onClose} wide={phase === "playing" || game.kind === "upload"} className={`game-modal phase-${phase} subject-${game.subject}`}>
     <div className="game-stepper" aria-label="শেখার ধাপ">{["দেখি", "খেলি", "শিখি"].map((label, i) => { const current = ["intro", "playing", "done"].indexOf(phase); return <span key={label} className={`${i === current ? "active" : i < current ? "complete" : ""}`} aria-current={i === current ? "step" : undefined}><i>{i < current ? <Check size={12}/> : bn(i + 1)}</i>{label}{i < 2 && <b/>}</span>; })}</div>
     {phase === "intro" && <><div className={`game-detail-cover ${game.subject}`}><img src={game.thumbnail} alt={game.title}/>{game.subject === "bangla" && <BanglaCover words={game.thumbnail.includes("words")}/>}<span className={`subject-badge ${game.subject}`}><SubjectIcon subject={game.subject} size={15}/>{subjectName(game.subject)}</span></div><div className="game-detail-body"><div className="eyebrow purple-text"><Sparkles size={14}/> ছোট্ট এক নতুন অভিযান</div><h3>আজ খেলি, নতুন কিছু শিখি!</h3><p className="muted">{game.description}</p><div className="game-detail-facts"><span><Users size={19}/><b>{bn(game.minAge)}–{bn(game.maxAge)} বছর</b><small>বয়স উপযোগী</small></span><span><Clock3 size={19}/><b>{bn(game.duration)} মিনিট</b><small>খেলার সময়</small></span><span><Target size={19}/><b>{game.difficulty}</b><small>শেখার স্তর</small></span></div><div className="learning-objectives"><h4>এই গেমে যা শিখব</h4>{goals.map((goal) => <p key={goal}><CheckCircle2 size={16}/>{goal}</p>)}</div>{game.kind === "upload" && <p className="safe-note"><ShieldCheck size={15}/> এই গেম আলাদা নিরাপদ স্যান্ডবক্সে চলবে।</p>}<button className="primary-button full-button" onClick={start}><Play size={17} fill="currentColor"/>চলো, শুরু করি!<ArrowRight size={18}/></button><p className="game-reassurance">ভুল হলেও সমস্যা নেই। চেষ্টা করতে করতেই শিখব!</p></div></>}

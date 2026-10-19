@@ -11,4 +11,8 @@ test-artifacts/
 playwright-report/
 test-results/
 .vercel/
+.open-next/
+.wrangler/
+.dev.vars
+cloudflare-env.d.ts
 .DS_Store

@@ -1,5 +1,6 @@
 import { banglaGames, banglaQuestions } from "@/lib/bangla";
-export type Subject = "bangla" | "math" | "english" | "science" | "creativity";
+import { generalGames, generalQuestions } from "@/lib/general";
+export type Subject = "bangla" | "math" | "english" | "science" | "creativity" | "general";
 export type GameKind = "quiz" | "memory" | "upload";
 export type Game = {
   id: string; title: string; description: string; subject: Subject;
@@ -22,6 +23,7 @@ export const subjects: { id: Subject; name: string; english: string; tagline: st
   { id: "english", name: "ইংরেজি", english: "English", tagline: "নতুন শব্দ, নতুন জগৎ", color: "orange" },
   { id: "science", name: "বিজ্ঞান", english: "Science", tagline: "কৌতূহল থেকেই আবিষ্কার", color: "blue" },
   { id: "creativity", name: "সৃজনশীলতা", english: "Creative skills", tagline: "রঙে রঙে কল্পনার ডানা", color: "purple" },
+  { id: "general", name: "সাধারণ জ্ঞান", english: "General Knowledge", tagline: "চারপাশের পৃথিবীকে জানি", color: "teal" },
 ];
 export const bn = (value: number | string) => String(value).replace(/\d/g, (n) => "০১২৩৪৫৬৭৮৯"[Number(n)]);
 export const subjectName = (id: string) => subjects.find((s) => s.id === id)?.name ?? id;
@@ -40,11 +42,13 @@ export const seedGames: Game[] = [
   seed("spelling-bee", "বানানের জাদুকর", "সঠিক বানান খুঁজে শব্দের জাদুকর হই।", "english", 7, 10, 6, "alphabet-adventure", false, "মাঝারি"),
   seed("solar-system", "মহাকাশের বন্ধু", "সূর্য, চাঁদ আর গ্রহের জগৎ ঘুরে দেখি।", "science", 7, 10, 7, "science-lab", false, "মাঝারি"),
   seed("memory-match", "স্মৃতির মেলা", "ছবির জোড়া খুঁজে মনোযোগ বাড়াই।", "creativity", 4, 10, 5, "creative-world", false, "সহজ", "memory"),
+  ...generalGames,
 ];
 export type Question = { prompt: string; options: string[]; answer: number; explanation: string; visual: string };
 const q = (prompt: string, options: string[], answer: number, explanation: string, visual = ""): Question => ({ prompt, options, answer, explanation, visual });
 export const questionBank: Record<string, Question[]> = {
   ...banglaQuestions,
+  ...generalQuestions,
   "number-garden": [
     q("এখানে কয়টি ফুল আছে?", ["২", "৩", "৪", "৫"], 1, "এক, দুই, তিন—মোট ৩টি ফুল!", "flowers:3"),
     q("৫-এর পরে কোন সংখ্যা আসে?", ["৪", "৭", "৬", "৮"], 2, "১, ২, ৩, ৪, ৫, ৬—৫-এর পরে ৬।", "number:৫ → ?"),

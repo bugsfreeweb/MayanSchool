@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" role="img" aria-label="সাধারণ জ্ঞানের নকশা">
+  <defs>
+    <linearGradient id="gkNight" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#d7ebe4"/>
+      <stop offset="1" stop-color="#b7ddd2"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="260" fill="url(#gkNight)"/>
+  <circle cx="318" cy="62" r="34" fill="#f2d074"/>
+  <circle cx="318" cy="62" r="24" fill="#f7e4a4"/>
+  <path d="M0 200 Q80 168 160 196 T400 190 V260 H0Z" fill="#8fbf8f"/>
+  <path d="M0 218 Q100 190 200 216 T400 208 V260 H0Z" fill="#6fa86f"/>
+  <g fill="#ffffff" opacity="0.85">
+    <circle cx="70" cy="56" r="7"/><circle cx="96" cy="56" r="10"/><circle cx="124" cy="56" r="6"/>
+  </g>
+  <g stroke="#4f7d4f" stroke-width="5" stroke-linecap="round" fill="none">
+    <path d="M92 200 v-46"/><path d="M92 174 l-20 -16"/><path d="M92 184 l20 -18"/>
+  </g>
+  <circle cx="92" cy="150" r="20" fill="#4f9d6a"/>
+  <g transform="translate(228 150)">
+    <rect x="-46" y="18" width="92" height="34" rx="10" fill="#e08a52"/>
+    <rect x="-30" y="-4" width="60" height="26" rx="8" fill="#f0a86e"/>
+    <circle cx="-30" cy="54" r="12" fill="#5b4636"/>
+    <circle cx="30" cy="54" r="12" fill="#5b4636"/>
+  </g>
+  <path d="M150 40 l6 14 14 6 -14 6 -6 14 -6 -14 -14 -6 14 -6Z" fill="#f0b45e"/>
+</svg>

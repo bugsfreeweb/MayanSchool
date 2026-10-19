@@ -21,8 +21,12 @@ export const curriculum: Record<Subject, Chapter[]> = {
     { id: "science-space", title: "আকাশের ওপারে", description: "সূর্য, চাঁদ আর আমাদের সৌরজগৎ", ages: "৭–১০ বছর", games: ["solar-system"] },
   ],
   creativity: [
-    { id: "creative-colors", title: "রঙের সাথে বন্ধুত্ব", description: "রং চিনি, মিশিয়ে নতুন রং বানাই", ages: "৪–৭ বছর", games: ["color-studio"] },
-    { id: "creative-memory", title: "মনোযোগের ছোট্ট খেলা", description: "ছবি মনে রাখি, জোড়া মিলাই", ages: "৪–১০ বছর", games: ["memory-match"] },
+    { id: "creative-colors", title: "রঙের সাথে বন্ধুত্ব", description: "রং চিনি, মিশিয়ে নতুন রং বানাই", ages: "৪–৭ বছর", games: ["color-studio"] },
+    { id: "creative-memory", title: "মনোযোগের ছোট্ট খেলা", description: "ছবি মনে রাখি, জোড়া মিলাই", ages: "৪–১০ বছর", games: ["memory-match"] },
+  ],
+  general: [
+    { id: "gk-bangladesh", title: "আমাদের বাংলাদেশ", description: "পতাকা, প্রতীক আর জাতীয় পরিচয় জানি", ages: "৪–৮ বছর", games: ["bd-symbols", "bd-culture"] },
+    { id: "gk-life", title: "ভালো মানুষ হওয়ার পাঠ", description: "সহায়ক মানুষ, অভ্যাস ও নিরাপত্তা শিখি", ages: "৪–৯ বছর", games: ["community-helpers", "good-habits", "transport-world"] },
   ],
 };
 export type LessonCard = { symbol: string; title: string; body: string };
@@ -55,8 +59,33 @@ const notes: Record<string, LessonCard[]> = {
     { symbol: "মেলে ডানা", title: "আমাদের ছোট্ট ছড়া", body: "ছোট্ট পাখি, মেলে ডানা—উড়তে তার নেই মানা! ডানা আর মানা শব্দে মিল আছে।" },
   ],
   "memory-match": [
-    { symbol: "☀", title: "দেখি আর মনে রাখি", body: "একটি কার্ড উল্টে ছবিটি দেখো। ছবিটি কোথায় আছে, মনে রাখো।" },
-    { symbol: "☀  ☀", title: "একই ছবির জোড়া", body: "একই ছবির দুটি কার্ড খুঁজে বের করো। তাড়াহুড়ো নয়, মন দিয়ে খেয়াল করো।" },
+    { symbol: "☀", title: "দেখি আর মনে রাখি", body: "একটি কার্ড উল্টে ছবিটি দেখো। ছবিটি কোথায় আছে, মনে রাখো।" },
+    { symbol: "☀  ☀", title: "একই ছবির জোড়া", body: "একই ছবির দুটি কার্ড খুঁজে বের করো। তাড়াহুড়ো নয়, মন দিয়ে খেয়াল করো।" },
+  ],
+  "bd-symbols": [
+    { symbol: "🇧🇩", title: "আমাদের লাল-সবুজ পতাকা", body: "সবুজ জমিনের মাঝে লাল বৃত্ত—এটাই আমাদের জাতীয় পতাকা।" },
+    { symbol: "🪷", title: "শাপলা আমাদের জাতীয় ফুল", body: "শাপলা পানিতে ফোটে, সাদা রঙের। এটি আমাদের গর্ব।" },
+    { symbol: "🐦", title: "দোয়েল আমাদের জাতীয় পাখি", body: "দোয়েল সুন্দর ডাকে। সে আমাদের দেশের প্রতীক।" },
+  ],
+  "community-helpers": [
+    { symbol: "👩‍🏫", title: "শিক্ষক", body: "শিক্ষক আমাদের পড়ান, নতুন জিনিস চিনতে শেখান।" },
+    { symbol: "👩‍⚕️", title: "ডাক্তার", body: "ডাক্তার অসুস্থ মানুষকে সুস্থ হতে সাহায্য করেন।" },
+    { symbol: "👨‍🌾", title: "কৃষক", body: "কৃষক মাঠে পরিশ্রম করে আমাদের খাবার ফলান।" },
+  ],
+  "good-habits": [
+    { symbol: "🧼", title: "হাত ধোয়ার অভ্যাস", body: "খাওয়ার আগে ও বাইরে থেকে ফিরে হাত ধুয়ে নিই।" },
+    { symbol: "🚦", title: "রাস্তা পার হওয়ার নিয়ম", body: "দুই দিকে দেখে, সবুজ বাতি হলে রাস্তা পার হই।" },
+    { symbol: "🙏", title: "ভালো ব্যবহার", body: "দয়া করে, ধন্যবাদ, ক্ষমা করুন—এই ছোট্ট শব্দগুলো বড় কাজ করে।" },
+  ],
+  "bd-culture": [
+    { symbol: "🎉", title: "পহেলা বৈশাখ", body: "বৈশাখের প্রথম দিনে আমরা নববর্ষ উদযাপন করি।" },
+    { symbol: "🌙", title: "ঈদ", body: "ঈদ আমাদের আনন্দ ও পুনর্মিলনের উৎসব।" },
+    { symbol: "🌾", title: "নবান্ন", body: "নতুন ফসল ঘরে আসলে নবান্ন উৎসব হয়।" },
+  ],
+  "transport-world": [
+    { symbol: "🚆", title: "ট্রেন", body: "ট্রেন রেললাইনের ওপর চলে, অনেক মানুষ একসাথে যান।" },
+    { symbol: "⛵", title: "নৌকা", body: "নৌকা পানিতে ভেসে চলে, নদীর পথে।" },
+    { symbol: "✈️", title: "উড়োজাহাজ", body: "উড়োজাহাজ আকাশপথে দূর দেশে নিয়ে যায়।" },
   ],
 };
 export const getLessonCards = (id: string): LessonCard[] => notes[id] ?? getQuestions(id).slice(0, 3).map((question) => ({ symbol: question.visual.split(":").slice(1).join(":") || "✦", title: question.options[question.answer], body: question.explanation }));
