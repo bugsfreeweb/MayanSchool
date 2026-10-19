@@ -11,6 +11,7 @@
     "pages:build": "opennextjs-cloudflare build && node scripts/package-pages.mjs",
     "pages:deploy": "npm run pages:build && wrangler pages deploy pages-dist --project-name mayanschool",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
+    "db:migrate": "node scripts/turso-migrate.mjs",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },

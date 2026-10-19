@@ -1,18 +1,16 @@
-import { cp, mkdir, readFile, rm, writeFile, access } from "node:fs/promises";
+import { cp, mkdir, rm, writeFile, access, copyFile } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 /**
- * Packages the OpenNext Cloudflare Workers build output as a
- * Cloudflare Pages deployment directory (advanced mode):
+ * Packages the OpenNext Cloudflare Workers build output as a Cloudflare
+ * Pages deployment directory (advanced mode).
  *
- *   pages-dist/
- *     _worker.js        <- OpenNext worker (module syntax, fetch handler)
- *     _routes.json      <- route all requests through the worker
- *     <static assets>   <- copied from .open-next/assets
- *
- * This lets the same build be served from a Pages project
- * (e.g. https://mayanschool.pages.dev) in addition to a Worker.
+ * OpenNext's `worker.js` is a module worker that imports sibling files at
+ * relative paths (./cloudflare/*, ./server-functions/*, ./.build/*). Pages
+ * serves an output directory, so the whole `.open-next` tree is copied in
+ * and the worker entry is renamed to `_worker.js` at the root, keeping all
+ * relative imports resolvable.
  */
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
@@ -30,8 +28,6 @@ async function exists(p) {
 
 async function main() {
   const worker = join(openNext, "worker.js");
-  const assets = join(openNext, "assets");
-
   if (!(await exists(worker))) {
     throw new Error(
       "Missing .open-next/worker.js — run `npx opennextjs-cloudflare build` first.",
@@ -41,25 +37,27 @@ async function main() {
   await rm(out, { recursive: true, force: true });
   await mkdir(out, { recursive: true });
 
-  if (await exists(assets)) {
-    await cp(assets, out, { recursive: true });
+  // Copy every OpenNext artifact (worker chunks, server-functions, .build,
+  // cloudflare helpers, middleware) so relative imports resolve.
+  for (const entry of ["cloudflare", "middleware", "server-functions", ".build", "dynamodb-provider"]) {
+    const src = join(openNext, entry);
+    if (await exists(src)) await cp(src, join(out, entry), { recursive: true });
   }
 
-  const workerSource = await readFile(worker, "utf8");
-  await writeFile(join(out, "_worker.js"), workerSource, "utf8");
+  // Static Next.js assets live at the output root.
+  const assets = join(openNext, "assets");
+  if (await exists(assets)) await cp(assets, out, { recursive: true });
 
-  // Route every request through the worker except Next static assets,
-  // which Pages serves directly from the deployment.
+  // Page Functions entry point.
+  await copyFile(worker, join(out, "_worker.js"));
+
+  // Route requests through the worker; Pages serves /_next/static directly.
   const routes = {
     version: 1,
     include: ["/*"],
-    exclude: ["/_next/static/*", "/favicon.ico"],
+    exclude: ["/_next/static/*"],
   };
-  await writeFile(
-    join(out, "_routes.json"),
-    JSON.stringify(routes, null, 2) + "\n",
-    "utf8",
-  );
+  await writeFile(join(out, "_routes.json"), JSON.stringify(routes, null, 2) + "\n", "utf8");
 
   console.log(`Pages output ready at ${out}`);
 }

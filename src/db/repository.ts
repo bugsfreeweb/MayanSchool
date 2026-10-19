@@ -48,7 +48,7 @@ export async function insertLearner() {
 export async function updateLearner(id: string, value: Omit<Learner, "id">) { await db.execute(sql`UPDATE learners SET name=${value.name},age=${value.age},daily_goal=${value.dailyGoal} WHERE id=${id}`); }
 export async function listFavorites(id: string) { const { rows } = await db.execute(sql`SELECT game_id FROM favorites WHERE learner_id=${id}`); return rows.map((r) => String(r.game_id)); }
 export async function setFavorite(learnerId: string, gameId: string, saved: boolean) {
-  if (saved) await db.execute(sql`INSERT INTO favorites (learner_id,game_id) VALUES (${learnerId},${gameId}) ON CONFLICT DO NOTHING`);
+  if (saved) await db.execute(sql`INSERT INTO favorites (learner_id,game_id) VALUES (${learnerId},${gameId}) ON CONFLICT (learner_id,game_id) DO NOTHING`);
   else await db.execute(sql`DELETE FROM favorites WHERE learner_id=${learnerId} AND game_id=${gameId}`);
 }
 export async function saveAttempt(value: { learnerId: string; gameId: string; correct: number; total: number; stars: number; duration: number }) {
