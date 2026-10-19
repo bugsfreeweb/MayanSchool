@@ -51,11 +51,12 @@ async function main() {
   // Page Functions entry point.
   await copyFile(worker, join(out, "_worker.js"));
 
-  // Route requests through the worker; Pages serves /_next/static directly.
+  // Route dynamic requests through the worker, but let Pages serve static
+  // assets (Next build output + everything in public/) directly from disk.
   const routes = {
     version: 1,
     include: ["/*"],
-    exclude: ["/_next/static/*"],
+    exclude: ["/_next/static/*", "/images/*", "/favicon.ico", "/sample-game.html"],
   };
   await writeFile(join(out, "_routes.json"), JSON.stringify(routes, null, 2) + "\n", "utf8");
 
