@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 300" role="img" aria-label="খোলা বইয়ের ওপর বসে আনন্দে পড়ছে দুই শিশু">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#eaf4ff"/>
+      <stop offset="1" stop-color="#fdf3ff"/>
+    </linearGradient>
+    <linearGradient id="book" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#e6eefb"/>
+    </linearGradient>
+  </defs>
+  <rect width="420" height="300" rx="26" fill="url(#sky)"/>
+  <circle cx="352" cy="58" r="30" fill="#ffd45e"/>
+  <g fill="#c9e7ff"><ellipse cx="80" cy="60" rx="34" ry="16"/><ellipse cx="112" cy="66" rx="24" ry="12"/></g>
+  <g fill="#d8f4dc"><ellipse cx="300" cy="210" rx="60" ry="20"/></g>
+  <path d="M60 220 q150 -34 300 0 l-24 54 q-126 -24 -252 0z" fill="#b2589b" opacity=".18"/>
+  <path d="M90 208 l120 -26 120 26 -120 30z" fill="url(#book)" stroke="#c3d3ea" stroke-width="3"/>
+  <path d="M210 182 v60" stroke="#c3d3ea" stroke-width="3"/>
+  <g fill="#ffd9a8">
+    <circle cx="150" cy="150" r="18"/>
+    <circle cx="272" cy="150" r="18"/>
+  </g>
+  <g>
+    <path d="M132 168 q18 -26 36 0 l-6 34 q-12 -8 -24 0z" fill="#5aa94b"/>
+    <path d="M254 168 q18 -26 36 0 l-6 34 q-12 -8 -24 0z" fill="#e0632f"/>
+  </g>
+  <g fill="#3a3a3a">
+    <circle cx="144" cy="148" r="2.6"/><circle cx="156" cy="148" r="2.6"/>
+    <circle cx="266" cy="148" r="2.6"/><circle cx="278" cy="148" r="2.6"/>
+  </g>
+  <path d="M144 156 q6 6 12 0" stroke="#a0522d" stroke-width="2" fill="none"/>
+  <path d="M266 156 q6 6 12 0" stroke="#a0522d" stroke-width="2" fill="none"/>
+  <g font-family="Segoe UI, Nirmala UI, sans-serif" text-anchor="middle" font-weight="800" opacity=".9">
+    <text x="150" y="230" font-size="20" fill="#3f7ad6">অ</text>
+    <text x="270" y="230" font-size="20" fill="#e0632f">১</text>
+  </g>
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-label="সৃজনশীল জগৎ">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fdeef6"/>
+      <stop offset="1" stop-color="#eaf5ff"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="220" rx="20" fill="url(#bg)"/>
+  <circle cx="120" cy="108" r="52" fill="#ff6f91" opacity=".55"/>
+  <circle cx="190" cy="108" r="52" fill="#ffd45e" opacity=".55"/>
+  <circle cx="155" cy="70" r="52" fill="#6fb3ff" opacity=".5"/>
+  <g>
+    <path d="M150 60 l10 22 24 3 -18 17 5 24 -21 -12 -21 12 5 -24 -18 -17 24 -3z" fill="#ffb3c7"/>
+  </g>
+  <g stroke-linecap="round" stroke-width="10">
+    <path d="M40 190 q30 -30 60 0 t60 0 t60 0 t60 0" fill="none" stroke="#5aa94b"/>
+  </g>
+</svg>

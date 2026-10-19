@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-label="সংখ্যার বাগান">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#dff0ff"/>
+      <stop offset="1" stop-color="#f4fbff"/>
+    </linearGradient>
+    <linearGradient id="grass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8fd694"/>
+      <stop offset="1" stop-color="#5cbf6a"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="220" rx="20" fill="url(#sky)"/>
+  <circle cx="262" cy="46" r="24" fill="#ffd45e"/>
+  <ellipse cx="160" cy="196" rx="150" ry="46" fill="url(#grass)"/>
+  <g font-family="Segoe UI, Nirmala UI, sans-serif" text-anchor="middle" font-weight="700">
+    <text x="70" y="150" font-size="46" fill="#3f7ad6">১</text>
+    <text x="130" y="120" font-size="40" fill="#e0632f">২</text>
+    <text x="190" y="150" font-size="46" fill="#5aa94b">৩</text>
+    <text x="250" y="120" font-size="40" fill="#b2589b">৪</text>
+  </g>
+  <g stroke="#3f9a52" stroke-width="4" stroke-linecap="round">
+    <path d="M70 150 v40"/><path d="M130 120 v70"/><path d="M190 150 v40"/><path d="M250 120 v70"/>
+  </g>
+</svg>

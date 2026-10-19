@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 220" role="img" aria-label="ছোট্ট বিজ্ঞানী">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e8f4ff"/>
+      <stop offset="1" stop-color="#f3ecff"/>
+    </linearGradient>
+    <linearGradient id="liquid" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7ec8ff"/>
+      <stop offset="1" stop-color="#3f7ad6"/>
+    </linearGradient>
+  </defs>
+  <rect width="320" height="220" rx="20" fill="url(#bg)"/>
+  <rect x="150" y="30" width="20" height="46" fill="#dbe7f5"/>
+  <path d="M120 84 q0 -6 6 -6 h68 q6 0 6 6 l-24 40 v46 q0 8 -8 8 h-16 q-8 0 -8 -8 v-46z" fill="#ffffff" stroke="#b9cde8" stroke-width="3"/>
+  <path d="M132 130 l40 0 v38 q0 4 -4 4 h-32 q-4 0 -4 -4z" fill="url(#liquid)"/>
+  <g fill="#9fe870">
+    <circle cx="146" cy="140" r="4"/><circle cx="160" cy="152" r="3"/><circle cx="152" cy="160" r="3"/>
+  </g>
+  <g fill="#ffd45e">
+    <circle cx="70" cy="70" r="16"/><circle cx="96" cy="120" r="10"/><circle cx="60" cy="150" r="7"/>
+  </g>
+  <circle cx="240" cy="70" r="20" fill="#ffb3c7" opacity=".85"/>
+  <circle cx="262" cy="120" r="12" fill="#c9a7ff" opacity=".8"/>
+</svg>

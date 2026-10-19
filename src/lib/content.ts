@@ -27,7 +27,7 @@ export const subjects: { id: Subject; name: string; english: string; tagline: st
 ];
 export const bn = (value: number | string) => String(value).replace(/\d/g, (n) => "০১২৩৪৫৬৭৮৯"[Number(n)]);
 export const subjectName = (id: string) => subjects.find((s) => s.id === id)?.name ?? id;
-const seed = (id: string, title: string, description: string, subject: Subject, minAge: number, maxAge: number, duration: number, thumbnail: string, featured = false, difficulty = "সহজ", kind: GameKind = "quiz"): Game => ({ id, title, description, subject, minAge, maxAge, duration, thumbnail: `/images/${thumbnail}.png`, featured, difficulty, kind, entryPath: null, published: true });
+const seed = (id: string, title: string, description: string, subject: Subject, minAge: number, maxAge: number, duration: number, thumbnail: string, featured = false, difficulty = "সহজ", kind: GameKind = "quiz"): Game => ({ id, title, description, subject, minAge, maxAge, duration, thumbnail: `/images/${thumbnail}.svg`, featured, difficulty, kind, entryPath: null, published: true });
 export const seedGames: Game[] = [
   ...banglaGames,
   seed("number-garden", "সংখ্যার বাগান", "গুনে গুনে সংখ্যার সাথে বন্ধুত্ব করি!", "math", 4, 6, 5, "number-garden", true),

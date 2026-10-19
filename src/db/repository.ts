@@ -11,7 +11,11 @@ const asLearner = (row: Row): Learner => ({ id: String(row.id), name: String(row
 export async function insertGame(game: Game, executor: Executor = db) {
   await executor.execute(sql`INSERT INTO games (id,title,description,subject,min_age,max_age,duration,difficulty,thumbnail,kind,entry_path,published,featured,created_at) VALUES (${game.id},${game.title},${game.description},${game.subject},${game.minAge},${game.maxAge},${game.duration},${game.difficulty},${game.thumbnail},${game.kind},${game.entryPath},${databaseBoolean(game.published)},${databaseBoolean(game.featured)},${new Date().toISOString()}) ON CONFLICT (id) DO NOTHING`);
 }
-export async function seedLibrary() { await db.transaction(async (tx) => { for (const game of seedGames) await insertGame(game, tx); }); }
+export async function seedLibrary() {
+  await db.transaction(async (tx) => { for (const game of seedGames) await insertGame(game, tx); });
+  // Repair thumbnails seeded by earlier builds that pointed at missing .png art.
+  await db.execute(sql`UPDATE games SET thumbnail = replace(thumbnail, '.png', '.svg') WHERE thumbnail LIKE '%/images/%.png'`);
+}
 export async function listGames(includeDrafts = false) {
   const { rows } = await db.execute(sql`SELECT * FROM games ${includeDrafts ? sql`` : sql`WHERE published = ${databaseBoolean(true)}`} ORDER BY featured DESC, created_at ASC`);
   return rows.map(asGame);

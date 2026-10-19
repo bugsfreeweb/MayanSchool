@@ -328,6 +328,17 @@ html[data-voice="off"] .voice-toggle { opacity: .8; }
 .sidebar-theme-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 2px 0; }
 html[data-sidebar="collapsed"] .sidebar-theme-row { flex-direction: column; align-items: center; }
 html[data-sidebar="collapsed"] .sidebar-theme-row .nav-label { display: none; }
+/* The sidebar is narrow: never render theme text labels there, and let the
+   footer controls wrap within the sidebar instead of spilling past its edge. */
+.sidebar-theme-row .theme-switcher button .theme-label { display: none; }
+.sidebar-theme-row .theme-switcher button { padding: 4px 7px; }
+.sidebar-theme-row .theme-switcher { min-width: 0; max-width: 100%; }
+.sidebar-theme-row .nav-label { display: none; }
+.sidebar-theme-row { min-width: 0; }
+.school-sidebar .sidebar-tools { flex-wrap: wrap; }
+.school-sidebar .motion-toggle { min-width: 0; flex: initial; }
+html[data-sidebar="collapsed"] .sidebar-theme-row .theme-switcher { flex-direction: column; }
+html[data-sidebar="collapsed"] .sidebar-theme-row .theme-switcher button { width: 100%; }
 
 /* ---------------------------------------------------------------- */
 /* General Knowledge subject accent (teal)                           */
@@ -399,6 +410,16 @@ html[data-sidebar="collapsed"] .sidebar-theme-row .nav-label { display: none; }
   .school-sidebar .utility-nav,
   .school-sidebar .studio-shortcut { min-height: 28px; }
   .school-sidebar .studio-credit { margin-top: 2px; }
+  /* On very short screens, shed footer text and tighten rows so the expanded
+     sidebar keeps all eight destinations plus the tools without scrolling. */
+  .school-sidebar .school-sidebar-bottom { padding-top: 10px; }
+  .school-sidebar .utility-nav { min-height: 30px; padding-top: 5px; padding-bottom: 5px; }
+  .school-sidebar .sidebar-tools { margin-top: 7px; padding-top: 8px; gap: 3px; }
+  .school-sidebar .sidebar-theme-row .theme-switcher button { padding: 3px 3px; }
+  .school-sidebar .theme-switcher button svg { width: 14px; height: 14px; }
+  .school-sidebar .theme-switcher { gap: 2px; padding: 2px; }
+  .school-sidebar .motion-toggle .nav-label { display: none; }
+  .school-sidebar .motion-toggle { padding: 4px; }
 }
 @media (max-width: 760px) {
   .school-sidebar .primary-nav .nav-item { min-height: 40px; padding-top: 6px; padding-bottom: 6px; }
@@ -406,6 +427,14 @@ html[data-sidebar="collapsed"] .sidebar-theme-row .nav-label { display: none; }
   .school-sidebar .sidebar-cozy-note { display: none; }
   .school-sidebar .sidebar-intro { margin-bottom: 4px; }
   .school-sidebar .sidebar-nav-label { margin: 10px 0 6px; }
+  /* On mobile the sidebar opens as a full-width drawer: always lay the tools
+     out as an expanded row regardless of a persisted collapsed preference. */
+  .school-sidebar .sidebar-tools { flex-direction: row; flex-wrap: wrap; }
+  .school-sidebar .motion-toggle { flex: 1; }
+  .school-sidebar .sidebar-theme-row { flex-direction: row; align-items: center; }
+  .school-sidebar .sidebar-theme-row .nav-label { display: none; }
+  .school-sidebar .sidebar-theme-row .theme-switcher { flex-direction: row; width: auto; }
+  .school-sidebar .sidebar-theme-row .theme-switcher button { width: auto; flex: none; }
 }
 
 /* ---------------------------------------------------------------- */
