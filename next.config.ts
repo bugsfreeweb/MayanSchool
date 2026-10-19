@@ -13,7 +13,12 @@ import type { NextConfig } from "next";
   so no architecture change is needed to host on Cloudflare.
 */
 
-const nextConfig: NextConfig = {};
+const nextConfig: NextConfig = {
+  // Keep the PostgreSQL driver out of the serverless/edge bundle. The Workers
+  // runtime uses Turso/libSQL and never imports `pg`, so leaving it external
+  // prevents `pg-cloudflare` from breaking the OpenNext/esbuild build.
+  serverExternalPackages: ["pg", "pg-cloudflare"],
+};
 
 export default nextConfig;
 
