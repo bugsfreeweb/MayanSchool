@@ -12,6 +12,7 @@ playwright-report/
 test-results/
 .vercel/
 .open-next/
+pages-dist/
 .wrangler/
 .dev.vars
 cloudflare-env.d.ts

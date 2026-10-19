@@ -39,16 +39,43 @@ The canonical PostgreSQL schema is `src/db/schema.ts`. Database interactions use
 
 The source is prepared for deployment, but no GitHub push, Vercel deployment, or remote Turso provisioning is performed automatically. A local `file:` libSQL URL may be used for integration tests; **do not use a local database file on Vercel**, whose filesystem is ephemeral/read-only.
 
-## Deploy to Cloudflare Workers (SSR)
+## Deploy to Cloudflare (SSR)
 
-Cloudflare hosting uses the `@opennextjs/cloudflare` adapter for server-side rendering, so API routes and database access remain intact.
+Cloudflare hosting uses the `@opennextjs/cloudflare` adapter for server-side rendering, so API routes and database access remain intact. Two targets are supported from the same build:
 
-1. Create a Turso database and set `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` (PostgreSQL is not reachable from the Workers runtime). Apply `node scripts/turso-migrate.mjs` once.
-2. Configure `wrangler.jsonc` (already present) and set secrets with `npx wrangler secret put TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `ADMIN_PASSWORD`, and `ADMIN_SESSION_SECRET`.
+- **Cloudflare Workers** — `https://mayan-school.<account>.workers.dev`
+- **Cloudflare Pages** — `https://mayanschool.pages.dev`
+
+1. Create a Turso database and set `TURSO_DATABASE_URL` and `TURSO_AUTH_TOKEN` (PostgreSQL is not reachable from the Workers/Pages runtime). Apply `node scripts/turso-migrate.mjs` once.
+2. Set secrets with `npx wrangler secret put TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`, `ADMIN_PASSWORD`, and `ADMIN_SESSION_SECRET`.
 3. Preview locally with `npm run preview`, which builds through OpenNext and serves the Worker runtime.
-4. Deploy with `npm run deploy`. Cloudflare's Git integration can also build and deploy on each merge.
 
-The adapter bundle uses symbolic links, so a Windows local build requires Developer Mode (or an elevated shell); Cloudflare's Linux CI builds without this limitation.
+### Workers
+
+- Configure `wrangler.jsonc` (already present) and deploy with `npm run deploy`.
+- `.github/workflows/deploy-cloudflare.yml` builds and deploys on each push to `main`.
+
+### Pages (`mayanschool.pages.dev`)
+
+- `npm run pages:build` packages the OpenNext output into `pages-dist/` (a Pages advanced-mode bundle: `_worker.js` + static assets + `_routes.json`).
+- Deploy with `npm run pages:deploy` (project name `mayanschool`).
+- `.github/workflows/deploy-cloudflare-pages.yml` builds and deploys on each push to `main`.
+
+### CI secrets
+
+Both workflows require repository secrets (Settings → Secrets and variables → Actions):
+
+| Secret | Purpose |
+| --- | --- |
+| `CLOUDFLARE_API_TOKEN` | Wrangler deploy token (Workers Scripts + Pages edit permissions) |
+| `CLOUDFLARE_ACCOUNT_ID` | Cloudflare account ID |
+| `TURSO_DATABASE_URL` | libSQL/Turso database URL |
+| `TURSO_AUTH_TOKEN` | Turso auth token |
+| `ADMIN_PASSWORD` | Admin panel password |
+| `ADMIN_SESSION_SECRET` | Admin session signing secret |
+
+The adapter bundle uses symbolic links, so a Windows local build requires Developer Mode (or an elevated shell); Cloudflare's Linux CI builds without this limitation, which is why the workflows are the recommended deploy path.
+
 
 ## Admin panel
 
