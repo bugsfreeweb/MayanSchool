@@ -39,12 +39,16 @@ jobs:
           npx wrangler pages project create mayanschool --production-branch main \
             || echo "Pages project already exists"
 
+      - name: Use Pages wrangler config
+        shell: bash
+        run: cp wrangler.pages.jsonc wrangler.jsonc
+
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy pages-dist --project-name mayanschool --branch main --config wrangler.pages.jsonc
+          command: pages deploy pages-dist --project-name mayanschool --branch main
 
       - name: Sync Pages secrets
         env:
@@ -63,7 +67,7 @@ jobs:
               echo "Skipping $name (not configured)"
               return
             fi
-            printf '%s' "$value" | npx wrangler pages secret put "$name" --project-name mayanschool --config wrangler.pages.jsonc
+            printf '%s' "$value" | npx wrangler pages secret put "$name" --project-name mayanschool
           }
           sync_secret TURSO_DATABASE_URL "$TURSO_DATABASE_URL"
           sync_secret TURSO_AUTH_TOKEN "$TURSO_AUTH_TOKEN"
