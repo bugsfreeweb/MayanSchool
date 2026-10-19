@@ -1,0 +1,172 @@
+import { chromium, expect } from '@playwright/test';
+import { mkdir, readFile } from 'node:fs/promises';
+import { zipSync, strToU8 } from 'fflate';
+const base = 'http://localhost:3000';
+const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
+const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+const page = await context.newPage();
+const errors = [], uploads = [];
+page.on('pageerror', error => errors.push(error.message));
+await mkdir('test-artifacts', { recursive: true });
+const profile = async () => (await page.request.get(`${base}/api/profile`)).json();
+const quiz = async (answers) => {
+  for (const answer of answers) { await page.locator('.answer-option').nth(answer).click(); await expect(page.locator('.answer-feedback')).toBeVisible(); await page.locator('.answer-feedback .primary-button').click(); }
+  await expect(page.locator('.result-screen')).toBeVisible();
+};
+try {
+  await page.goto(base, { waitUntil: 'networkidle' });
+  await page.evaluate(() => document.fonts.ready);
+  await page.waitForTimeout(900);
+  await expect(page).toHaveTitle(/Mayan School/);
+  await expect(page.locator('.subject-card')).toHaveCount(5);
+  await expect(page.locator('.school-sidebar .primary-nav .nav-item')).toHaveCount(4);
+  const catalog = (await (await page.request.get(`${base}/api/games`)).json()).games;
+  expect(catalog.filter(g => g.subject === 'bangla')).toHaveLength(8);
+  await page.screenshot({ path: 'test-artifacts/mayan-home.png', fullPage: true });
+  await page.getByRole('button', { name: 'সাইডবার ছোট করো', exact: true }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-sidebar', 'collapsed');
+  await expect(page.locator('.school-sidebar')).toHaveCSS('width', '78px');
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(page.locator('html')).toHaveAttribute('data-sidebar', 'collapsed');
+  await page.screenshot({ path: 'test-artifacts/mayan-collapsed.png', fullPage: true });
+  await page.getByRole('button', { name: 'সাইডবার বড় করো', exact: true }).click();
+  await page.getByRole('button', { name: 'অ্যানিমেশন বন্ধ করো', exact: true }).click();
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
+  await expect(page.locator('.hero-banner')).toHaveCSS('animation-name', 'none');
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
+  await page.getByRole('button', { name: 'অ্যানিমেশন চালু করো', exact: true }).click();
+  for (const height of [540, 650, 900]) {
+    await page.setViewportSize({ width: 1440, height }); await page.waitForTimeout(350);
+    const fit = await page.locator('.school-sidebar').evaluate(el => ({ scroll: el.scrollHeight, height: el.clientHeight, bottom: el.querySelector('.school-sidebar-bottom').getBoundingClientRect().bottom, viewport: innerHeight }));
+    expect(fit.scroll).toBeLessThanOrEqual(fit.height + 1); expect(fit.bottom).toBeLessThanOrEqual(fit.viewport);
+  }
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  console.log('PASS brand, five subjects, compact sidebar, collapse persistence, motion preference, no sidebar scroll');
+
+  await page.goto(`${base}/subjects/bangla`, { waitUntil: 'networkidle' });
+  await expect(page.locator('.library-grid .game-card')).toHaveCount(8);
+  await page.waitForTimeout(500);
+  await page.screenshot({ path: 'test-artifacts/mayan-bangla.png', fullPage: true });
+  const card = page.locator('.game-card').filter({ has: page.locator('.game-title', { hasText: 'স্বরবর্ণের বাগান' }) });
+  await card.getByRole('button', { name: 'খেলি ও শিখি', exact: true }).click();
+  await expect(page.locator('.game-stepper .active')).toContainText('দেখি');
+  await page.getByRole('button', { name: 'চলো, শুরু করি!' }).click();
+  await expect(page.locator('.game-stepper .active')).toContainText('খেলি');
+  await quiz([2, 3, 0, 1, 3]);
+  await expect(page.locator('.result-screen.needs-practice')).toBeVisible();
+  await expect(page.locator('.result-confetti')).toHaveCount(0);
+  expect((await profile()).stats.masteredIds).not.toContain('bangla-vowels');
+  await page.locator('.result-review summary').click();
+  await expect(page.locator('.result-review>div')).toHaveCount(5);
+  await page.screenshot({ path: 'test-artifacts/mayan-practice-result.png' });
+  await page.getByRole('button', { name: 'আবার খেলি', exact: true }).click();
+  await quiz([1, 2, 3, 0, 2]);
+  await expect(page.locator('.result-screen.passed')).toBeVisible();
+  await expect(page.locator('.result-stars .earned')).toHaveCount(3);
+  expect((await profile()).stats.masteredIds).toContain('bangla-vowels');
+  await page.waitForTimeout(650); await page.screenshot({ path: 'test-artifacts/mayan-passed-result.png' });
+  await page.getByRole('button', { name: 'আরও শিখতে যাই' }).click();
+  await Promise.all([page.waitForResponse(r => r.url().endsWith('/api/favorites') && r.request().method() === 'POST'), card.locator('.save-button').click()]);
+  await expect(card.locator('.save-button')).toHaveAttribute('aria-pressed', 'true');
+  expect((await profile()).favorites).toContain('bangla-vowels');
+  console.log('PASS Bangla quiz, gentle retry, review, pass state, server grading, mastery and bookmarks');
+
+  await page.getByRole('link', { name: 'শেখার পথ', exact: true }).click();
+  await expect(page.locator('.lesson-row.complete')).toHaveCount(1);
+  await page.screenshot({ path: 'test-artifacts/mayan-lessons.png', fullPage: true });
+  await page.locator('.chapter-card').first().locator('.lesson-row').nth(1).getByRole('button').click();
+  await expect(page.locator('.lesson-reader')).toBeVisible();
+  for (let i = 0; i < 4; i++) await page.getByRole('button', { name: 'পরের অংশ', exact: true }).click();
+  await page.getByRole('button', { name: 'এবার খেলি ও শিখি' }).click();
+  await page.getByRole('button', { name: 'চলো, শুরু করি!' }).click();
+  await quiz([1, 2, 0, 3, 1]);
+  await page.getByRole('button', { name: 'আরও শিখতে যাই' }).click();
+  await expect(page.locator('.chapter-card').first()).toHaveClass(/mastered/);
+  await expect(page.locator('.chapter-celebration')).toBeVisible();
+  await page.reload({ waitUntil: 'networkidle' });
+  await expect(page.locator('.chapter-card').first()).toHaveClass(/mastered/);
+  await page.locator('.chapter-card').nth(2).locator('.chapter-trigger').click();
+  await expect(page.locator('.chapter-card').nth(2).locator('.chapter-trigger')).toHaveAttribute('aria-expanded', 'true');
+  await page.locator('.curriculum-tabs').getByRole('button', { name: /গণিত/ }).click();
+  await expect(page.locator('.chapter-card')).toHaveCount(2);
+  await expect(page.locator('.chapter-card').first()).toContainText('সংখ্যা ও আকৃতির পরিচয়');
+  console.log('PASS teaching cards, practice hand-off, chapter completion, persistent mastery, animated accordion and subject paths');
+
+  await page.goto(`${base}/subjects/bangla#alphabet`, { waitUntil: 'networkidle' });
+  await expect(page.locator('.alphabet-grid>button')).toHaveCount(11);
+  await page.getByRole('button', { name: 'আ, আম', exact: true }).click();
+  await expect(page.locator('.discovery-character')).toHaveText('আ');
+  await expect(page.locator('.letter-discovery h3')).toContainText('আম');
+  await page.locator('.alphabet-tabs').getByRole('button', { name: /ব্যঞ্জনবর্ণ/ }).click();
+  await expect(page.locator('.alphabet-grid>button')).toHaveCount(39);
+  await page.getByRole('button', { name: 'ম, মাছ', exact: true }).click();
+  await page.getByRole('button', { name: 'লিখে দেখি', exact: true }).click();
+  const canvas = page.locator('.tracing-surface canvas');
+  const box = await canvas.boundingBox();
+  await page.mouse.move(box.x + 55, box.y + 70); await page.mouse.down(); await page.mouse.move(box.x + 170, box.y + 150, { steps: 12 }); await page.mouse.up();
+  await expect(page.getByRole('button', { name: 'মুছে আবার লিখি' })).toBeEnabled();
+  expect(await canvas.evaluate(c => c.getContext('2d').getImageData(0, 0, c.width, c.height).data.some((v, i) => i % 4 === 3 && v > 0))).toBe(true);
+  await page.screenshot({ path: 'test-artifacts/mayan-tracing.png' });
+  await page.getByRole('button', { name: 'মুছে আবার লিখি' }).click();
+  expect(await canvas.evaluate(c => c.getContext('2d').getImageData(0, 0, c.width, c.height).data.every(v => v === 0))).toBe(true);
+  await page.getByRole('button', { name: 'শেষ করেছি', exact: true }).click();
+  console.log('PASS all 50 Bangla letters, flashcard examples, pointer drawing and clearing');
+
+  await page.goto(`${base}/admin`, { waitUntil: 'networkidle' });
+  await page.getByRole('button', { name: 'ডেমো অ্যাডমিন খুলুন' }).click();
+  await expect(page.locator('.admin-library')).toBeVisible();
+  const title = `Mayan QA ${Date.now()}`;
+  await page.getByRole('button', { name: 'নতুন গেম যোগ করুন' }).click();
+  await page.locator('.upload-form input[type="file"]').first().setInputFiles('public/sample-game.html');
+  await page.locator('.upload-form input[name="title"]').fill(title);
+  await page.locator('.upload-form select[name="subject"]').selectOption('bangla');
+  await page.getByRole('button', { name: 'আপলোড ও প্রকাশ করুন' }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  const uploaded = (await (await page.request.get(`${base}/api/games?admin=1`)).json()).games.find(g => g.title === title);
+  expect(uploaded.subject).toBe('bangla'); uploads.push(uploaded.id);
+  const row = page.locator('tbody tr').filter({ hasText: title });
+  await row.locator('.publish-switch').click();
+  await expect(row.locator('.publish-switch')).toHaveText('খসড়া');
+  expect((await (await page.request.get(`${base}/api/games`)).json()).games.some(g => g.id === uploaded.id)).toBe(false);
+  await row.locator('.publish-switch').click();
+  await expect(row.locator('.publish-switch')).toHaveText('প্রকাশিত');
+  await row.getByRole('button', { name: `${title} মুছে ফেলুন` }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'মুছে ফেলুন', exact: true }).click();
+  await expect(page.getByRole('dialog')).toHaveCount(0);
+  const zip = zipSync({ 'nested/index.html': strToU8('<!doctype html><link rel="stylesheet" href="style.css"><h1>Loading</h1><script src="game.js"></script>'), 'nested/style.css': strToU8('body{background:rgb(230,240,220)}'), 'nested/game.js': strToU8('document.querySelector("h1").textContent="Mayan ZIP ready"') });
+  const response = await page.request.post(`${base}/api/games`, { multipart: { file: { name: 'sample.zip', mimeType: 'application/zip', buffer: Buffer.from(zip) }, title: 'Mayan QA ZIP', subject: 'bangla' } });
+  expect(response.status()).toBe(201); const zipGame = (await response.json()).game; uploads.push(zipGame.id);
+  await page.goto(`${base}/games?q=Mayan%20QA%20ZIP`, { waitUntil: 'networkidle' });
+  await page.locator('.game-play-button').click(); await page.getByRole('button', { name: 'চলো, শুরু করি!' }).click();
+  await expect(page.frameLocator('.uploaded-game-frame').getByRole('heading', { name: 'Mayan ZIP ready' })).toBeVisible();
+  await expect(page.frameLocator('.uploaded-game-frame').locator('body')).toHaveCSS('background-color', 'rgb(230, 240, 220)');
+  await page.getByRole('button', { name: 'বন্ধ করো', exact: true }).click();
+  console.log('PASS admin Bangla upload, publish/unpublish, delete and nested ZIP sandbox execution');
+
+  for (const width of [320, 390, 768, 1024, 1440]) {
+    await page.setViewportSize({ width, height: 900 });
+    for (const route of ['', '/lessons', '/subjects/bangla']) {
+      await page.goto(base + route, { waitUntil: 'networkidle' }); await page.waitForTimeout(450);
+      const size = await page.evaluate(() => ({ width: innerWidth, scroll: document.documentElement.scrollWidth }));
+      expect(size.scroll, `overflow ${width} ${route}`).toBeLessThanOrEqual(size.width);
+    }
+    console.log('PASS responsive', width);
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto(base, { waitUntil: 'networkidle' }); await page.waitForTimeout(500);
+  await page.screenshot({ path: 'test-artifacts/mayan-mobile.png', fullPage: true });
+  await page.getByRole('button', { name: 'মেনু খোলো' }).click();
+  await expect(page.locator('.school-sidebar.is-open')).toBeVisible();
+  expect(await page.locator('.school-sidebar').evaluate(el => el.scrollHeight <= el.clientHeight + 1)).toBe(true);
+  await page.screenshot({ path: 'test-artifacts/mayan-mobile-menu.png' });
+  await page.locator('.primary-nav').getByRole('link', { name: 'শেখার পথ', exact: true }).click();
+  await expect(page.locator('.lessons-heading')).toBeVisible();
+  await expect(page.locator('.school-sidebar')).toHaveAttribute('inert', '');
+  await page.emulateMedia({ reducedMotion: 'reduce' }); await page.reload({ waitUntil: 'networkidle' });
+  await expect(page.locator('html')).toHaveAttribute('data-motion', 'off');
+  await expect(page.locator('.curriculum-summary')).toHaveCSS('animation-name', 'none');
+  expect(errors).toEqual([]);
+  console.log('ALL MAYAN SCHOOL CHECKS PASSED');
+} catch (error) { await page.screenshot({ path: 'test-artifacts/mayan-failure.png', fullPage: true }); console.error(error); process.exitCode = 1; }
+finally { for (const id of uploads) await page.request.delete(`${base}/api/games/${id}`).catch(() => {}); await browser.close(); }

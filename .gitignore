@@ -1,0 +1,14 @@
+node_modules/
+.next/
+.env
+.env.*
+!.env.example
+*.db
+*.db-shm
+*.db-wal
+*.tsbuildinfo
+test-artifacts/
+playwright-report/
+test-results/
+.vercel/
+.DS_Store
